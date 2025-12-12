@@ -1,0 +1,108 @@
+---
+title: "bezrobocie_wynagrodzenie"
+format: pdf
+editor: visual
+---
+
+# Badanie zależności między bezrobociem zarejestrowanym, a przeciętnym wynagrodzeniem brutto.
+
+## Wstęp
+
+## Opisanie danych
+
+## Pytania badawcze
+
+## Wczytanie danych
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+```
+
+```{r}
+data <- read.csv("sprawozdanie1_dane.csv")
+head(data)
+```
+
+## Analiza danych
+
+### Obliczanie wskaźnika bezrobocia
+
+```{r}
+data_mod <- data |> mutate(wskaznik_bezrobocia = Bezrobotni/Ludność_wiek_prod)
+
+data_mod |> group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = mean(wskaznik_bezrobocia)) |>
+  ggplot(aes(x=factor(Rok), y=srednie_bezrobocie, fill=Płeć)) + 
+  geom_bar(stat="identity", position = "dodge") +
+  labs(title = "Średni krajowy wskaźnik bezrobocia w ostatnich 10 latach",
+       y = "Średni krajowy wskaźnik bezrobocia",
+       x = "Rok")
+```
+
+```{r}
+data_mod |> filter(Ludność >= 100000) |>
+  group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = mean(wskaznik_bezrobocia)) |>
+  ggplot(aes(x=factor(Rok), y=srednie_bezrobocie, fill=Płeć)) + 
+  geom_bar(stat="identity", position = "dodge") +
+  labs(title = "Średni krajowy wskaźnik bezrobocia w ostatnich 10 latach (duże powiaty)",
+       y = "Średni krajowy wskaźnik bezrobocia",
+       x = "Rok")
+```
+
+```{r}
+data_mod |> filter(Ludność < 100000) |>
+  group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = mean(wskaznik_bezrobocia)) |>
+  ggplot(aes(x=factor(Rok), y=srednie_bezrobocie, fill=Płeć)) + 
+  geom_bar(stat="identity", position = "dodge") +
+  labs(title = "Średni krajowy wskaźnik bezrobocia w ostatnich 10 latach (małe powiaty)",
+       y = "Średni krajowy wskaźnik bezrobocia",
+       x = "Rok")
+```
+
+```{r}
+śr_r_bezrob_duże_miasta <- data_mod |> filter(Ludność >= 100000) |>
+  group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = round(mean(wskaznik_bezrobocia),3))
+
+tab <- śr_r_bezrob_duże_miasta |> pivot_wider(
+  names_from = Rok,
+  values_from = srednie_bezrobocie
+)
+tab
+
+śr_r_bezrob_male_miasta <- data_mod |> filter(Ludność < 100000) |>
+  group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = round(mean(wskaznik_bezrobocia),3))
+
+tab2 <- śr_r_bezrob_male_miasta |> pivot_wider(
+  names_from = Rok,
+  values_from = srednie_bezrobocie
+)
+tab2
+```
+
+```{r}
+data_mod |> filter(Płeć == "ogółem") |>
+  group_by(Rok) |> 
+  ggplot(aes(x=factor(Rok), y=wskaznik_bezrobocia)) + geom_boxplot()
+```
+
+```{r}
+data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
+  ggplot(aes(x=log(Wynagrodzenie_przeciętne), y=wskaznik_bezrobocia)) +
+  geom_point() +
+  geom_smooth(method="lm", se=FALSE)
+```
+
+```{r}
+data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
+  ggplot(aes(x=log(Ludność), y=wskaznik_bezrobocia)) +
+  geom_point() +
+  geom_smooth(method="lm", se=FALSE)
+```
+
+```{r}
+data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
+  ggplot(aes(x=log(Ludność_wiek_prod), y=wskaznik_bezrobocia)) +
+  geom_point() +
+  geom_smooth(method="lm", se=FALSE)
+```
