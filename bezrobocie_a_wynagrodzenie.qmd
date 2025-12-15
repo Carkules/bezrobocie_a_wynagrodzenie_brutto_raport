@@ -1,12 +1,18 @@
 ---
 title: "bezrobocie_wynagrodzenie"
-format: pdf
+format: html
 editor: visual
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
-# Badanie zależności między bezrobociem zarejestrowanym, a przeciętnym wynagrodzeniem brutto.
+# Analiza bezrobocia rejestrowanego w Polsce w latach 2015-2024 na poziomie powiatów
 
 ## Wstęp
+
+Bezrobocie rejestrowane to forma bezrobocia obejmująca osoby, które zgłosiły się do powiatowego urzędu pracy i zostały wpisane do oficjalnego rejestru bezrobotnych. Oznacza to, że dana osoba nie ma zatrudnienia, aktywnie poszukuje pracy i jest gotowa ją podjąć, spełniając jednocześnie warunki określone w przepisach. Ludzie rejestrują się w urzędzie pracy z różnych powodów – przede wszystkim w celu znalezienia zatrudnienia za pośrednictwem urzędu, ale także po to, aby uzyskać wsparcie finansowe w postaci zasiłku, jeśli spełniają kryteria jego przyznania. Rejestracja zapewnia także prawo do ubezpieczenia zdrowotnego opłacanego przez państwo, co ma znaczenie szczególnie dla osób pozostających bez pracy i bez innego tytułu do ubezpieczenia. Dodatkowo zarejestrowani bezrobotni mogą korzystać z ofert bezpłatnych szkoleń, kursów zawodowych, staży czy programów aktywizacyjnych, które pomagają w powrocie na rynek pracy. Warto zaznaczyć, że bezrobocie rejestrowane jest tylko jedną z miar bezrobocia, ponieważ obejmuje wyłącznie osoby, które faktycznie zgłosiły się do urzędu – nie uwzględnia osób poszukujących pracy na własną rękę ani tych, które pracują nieformalnie (na czarno), dlatego nie odzwierciedla całkowitej liczby osób pozostających bez zatrudnienia.
 
 ## Opisanie danych
 
@@ -80,6 +86,9 @@ tab2 <- śr_r_bezrob_male_miasta |> pivot_wider(
 tab2
 ```
 
+```         
+```
+
 ```{r}
 data_mod |> filter(Płeć == "ogółem") |>
   group_by(Rok) |> 
@@ -88,21 +97,21 @@ data_mod |> filter(Płeć == "ogółem") |>
 
 ```{r}
 data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
-  ggplot(aes(x=log(Wynagrodzenie_przeciętne), y=wskaznik_bezrobocia)) +
+  ggplot(aes(x=Wynagrodzenie_przeciętne, y=wskaznik_bezrobocia)) +
   geom_point() +
   geom_smooth(method="lm", se=FALSE)
 ```
 
 ```{r}
 data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
-  ggplot(aes(x=log(Ludność), y=wskaznik_bezrobocia)) +
+  ggplot(aes(x=log(Ludność), y=log(Bezrobotni))) +
   geom_point() +
   geom_smooth(method="lm", se=FALSE)
 ```
 
 ```{r}
 data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
-  ggplot(aes(x=log(Ludność_wiek_prod), y=wskaznik_bezrobocia)) +
+  ggplot(aes(x=log(Ludność_wiek_prod), y=log(Bezrobotni))) +
   geom_point() +
   geom_smooth(method="lm", se=FALSE)
 ```
