@@ -103,10 +103,33 @@ data_mod |> filter(Ludność < 100000) |>
        x = "Rok")
 ```
 
-```         
-```
+```{r}
+duze <- data_mod |>
+  filter(Ludność >= 100000) |>
+  mutate(Typ_miasta = "Duże miasta") |>
+  group_by(Rok, Płeć, Typ_miasta) |>
+  summarize(srednie_bezrobocie = round(mean(stopa_bezrobocia),3), .groups = "drop")
 
-```         
+male <- data_mod |>
+  filter(Ludność < 100000) |>
+  mutate(Typ_miasta = "Małe miasta") |>
+  group_by(Rok, Płeć, Typ_miasta) |>
+  summarize(srednie_bezrobocie = round(mean(stopa_bezrobocia),3), .groups = "drop")
+
+wszystkie <- bind_rows(duze, male)
+
+tab <- wszystkie |>
+  pivot_wider(
+    names_from = Rok,
+    values_from = srednie_bezrobocie
+  )
+
+knitr::kable(
+  tab,
+  booktabs = FALSE,
+  caption = "Średnia stopa bezrobocia w miastach według typów, płci i roku"
+)
+
 ```
 
 ```{r}
