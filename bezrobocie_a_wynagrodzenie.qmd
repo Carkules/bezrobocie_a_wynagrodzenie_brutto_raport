@@ -1,22 +1,51 @@
 ---
-title: "bezrobocie_wynagrodzenie"
-format: html
+title: "Analiza bezrobocia rejestrowanego w Polsce w latach 2015-2024 na poziomie powiatów"
+format: pdf
 editor: visual
+lang: pl
+crossref:
+  fig-title: "Rysunek"
 execute:
   echo: false
   warning: false
   message: false
 ---
 
-# Analiza bezrobocia rejestrowanego w Polsce w latach 2015-2024 na poziomie powiatów
-
-## Wstęp
+### Czym jest bezrobocie rejestrowane?
 
 Bezrobocie rejestrowane to forma bezrobocia obejmująca osoby, które zgłosiły się do powiatowego urzędu pracy i zostały wpisane do oficjalnego rejestru bezrobotnych. Oznacza to, że dana osoba nie ma zatrudnienia, aktywnie poszukuje pracy i jest gotowa ją podjąć, spełniając jednocześnie warunki określone w przepisach. Ludzie rejestrują się w urzędzie pracy z różnych powodów – przede wszystkim w celu znalezienia zatrudnienia za pośrednictwem urzędu, ale także po to, aby uzyskać wsparcie finansowe w postaci zasiłku, jeśli spełniają kryteria jego przyznania. Rejestracja zapewnia także prawo do ubezpieczenia zdrowotnego opłacanego przez państwo, co ma znaczenie szczególnie dla osób pozostających bez pracy i bez innego tytułu do ubezpieczenia. Dodatkowo zarejestrowani bezrobotni mogą korzystać z ofert bezpłatnych szkoleń, kursów zawodowych, staży czy programów aktywizacyjnych, które pomagają w powrocie na rynek pracy. Warto zaznaczyć, że bezrobocie rejestrowane jest tylko jedną z miar bezrobocia, ponieważ obejmuje wyłącznie osoby, które faktycznie zgłosiły się do urzędu – nie uwzględnia osób poszukujących pracy na własną rękę ani tych, które pracują nieformalnie (na czarno), dlatego nie odzwierciedla całkowitej liczby osób pozostających bez zatrudnienia.
 
-## Opisanie danych
+### Jak zbierane są dane?
 
-## Pytania badawcze
+Podstawowymi sposobami zbierania danych przez GUS są źródła administracyjne (dane publiczne), spisy powszechne oraz badania ankietowe. Źródła administracyjne obejmują informacje pochodzące z rejestrów prowadzonych przez instytucje publiczne, takie jak urzędy skarbowe, Zakład Ubezpieczeń Społecznych czy urzędy pracy. Spisy powszechne są badaniami obejmującymi całą populację lub jej dużą część i pozwalają na uzyskanie szczegółowych danych dotyczących m.in. ludności, mieszkań i gospodarstw domowych. Natomiast badania ankietowe prowadzone przez GUS mogą mieć charakter ciągły, cykliczny lub jednorazowy i są realizowane na wybranej próbie respondentów, co umożliwia systematyczne monitorowanie zjawisk społecznych i gospodarczych.
+
+### Opisanie Zmiennych w danych
+
+Zmienna "Powiat" to nazwa powiatu w którym zostały zebrane dane.
+
+Zmienna "Kod" to numer statystyczny konkretnego powiatu (każdy powiat ma swój indywidualny Kod).
+
+Zmienna "Płeć" przyjmuje 3 stany (Mężczyzna, Kobieta, Ogółem) czyli mówi nam czy szereg pozostałych zmiennych był rozpatrywany pod kątem jakiejś konkretnej płci czy badany był ogółem.
+
+Zmienna "Ludność" mówi nam ile osób było mieszkańcami danego powiatu na końcu konkretnego roku.
+
+Zmienna "Bezrobotni" mówi nam o liczbie mieszkańców danego powiatu którzy mają status Bezrobocia Rejestrowanego w danym roku (tutaj nie wiemy nic o bezrobociu nierejestrowanym).
+
+Zmienna "Ludność_wiek_prod" mówi nam o liczbie mieszkańców danego powiatu którzy są w wieku produkcyjnym (miedzy 18 a 59/64 odpowiednio dla kobiet/mężczyzn) na koniec danego roku.
+
+Zmienna "Wynagrodzenie_przeciętne" mówi nam o średnich zarobkach brutto przez mieszkańców danego powiatu (ta zmienna nie ma rozróżnienia na płcie). Brak danych jest spowodowany tym że GUS nie oferuje informacji o wynagrodzeniach dla mężczyzn i kobiet osobno, tylko dla ogółu.
+
+### Pytania badawcze
+
+Te oryginalne a) Czy jako bezrobotne rejestrują się częściej kobiety, czy mężczyźni w Polsce? b) Czy wskaźnik bezrobocia jest wyższy w powiatach, gdzie jest niższe przeciętne wynagrodzenie brutto, czy wyższe? c) Czy zależności a) i b) wyglądają inaczej w dużych miastach (miastach na prawach powiatu, powyżej 100 tys. mieszkańców)? d) Czy zależności a) i b) są stałe w czasie, czy zmieniły się w ostatnich 10 latach?
+
+Moja propozycja modyfikacji(jeśli potrzebna)
+
+1)  Czy jako bezrobotne rejestrują się częściej kobiety, czy mężczyźni w Polsce w skali czasu? +1.1) Czy jako bezrobotne rejestrują się częściej kobiety w skali liczby kobiet, czy mężczyźni w skali liczby mężczyzn w Polsce w skali czasu?
+
+2)  Czy wskaźnik bezrobocia jest wyższy w powiatach, gdzie jest niższe przeciętne wynagrodzenie brutto, czy wyższe przeciętne wynagrodzenie brutto ? (to samo) ( w jakims konkternym roku?)
+
+3)  Czy zależność 1) i 1.1) wygląda inaczej w małych powiatach i w dużych powiatach(duże powiaty czyli powyżej 100tyś mieszkańców) ??(Niektóre powiaty mają +100tys mieszkancow a potem pozizej 100tys wiec takim kryterium moze zrobimy że (if max(Ludność(Ogółem,Rok)) \>100tys) to kwalifikujemy na duże powaity? )??
 
 ## Wczytanie danych
 
@@ -28,90 +57,97 @@ library(tidyr)
 
 ```{r}
 data <- read.csv("sprawozdanie1_dane.csv")
-head(data)
 ```
 
 ## Analiza danych
 
-### Obliczanie wskaźnika bezrobocia
+### Obliczanie stopy bezrobocia rejestrowanego
+
+Stopa bezrobocia rejestrowanego to stosunek liczby osób bezrobotnych do całkowitej liczby ludności w wieku produkcyjnym. Na podstawie przyjętych danych powiatowych obliczyliśmy krajową stopę bezrobocia w poszczególnych latach z podziałem na płeć. Wyniki zostały przedstawione na wykresie słupkowym poniżej.
 
 ```{r}
-data_mod <- data |> mutate(wskaznik_bezrobocia = Bezrobotni/Ludność_wiek_prod)
-
-data_mod |> group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = mean(wskaznik_bezrobocia)) |>
-  ggplot(aes(x=factor(Rok), y=srednie_bezrobocie, fill=Płeć)) + 
-  geom_bar(stat="identity", position = "dodge") +
-  labs(title = "Średni krajowy wskaźnik bezrobocia w ostatnich 10 latach",
-       y = "Średni krajowy wskaźnik bezrobocia",
-       x = "Rok")
+data_mod <- data |> mutate(stopa_bezrobocia = Bezrobotni/Ludność_wiek_prod)
 ```
 
 ```{r}
+#| label: fig_1
+#| fig-cap: "Krajowa stopa bezrobocia w ostatnich 10 latach"
+data_mod |> group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = sum(Bezrobotni)/sum(Ludność_wiek_prod)) |>
+  ggplot(aes(x=factor(Rok), y=srednie_bezrobocie, fill=Płeć)) + 
+  geom_bar(stat="identity", position = "dodge") +
+  labs(y = "Stopa bezrobocia",
+       x = "Rok")
+```
+
+Na
+
+```{r}
+#| label: fig_2
+#| fig-cap: "Średnia krajowa stopa bezrobocia w ostatnich 10 latach (duże powiaty)"
 data_mod |> filter(Ludność >= 100000) |>
-  group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = mean(wskaznik_bezrobocia)) |>
+  group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = sum(Bezrobotni)/sum(Ludność_wiek_prod)) |>
   ggplot(aes(x=factor(Rok), y=srednie_bezrobocie, fill=Płeć)) + 
   geom_bar(stat="identity", position = "dodge") +
-  labs(title = "Średni krajowy wskaźnik bezrobocia w ostatnich 10 latach (duże powiaty)",
-       y = "Średni krajowy wskaźnik bezrobocia",
+  labs(y = "Stopa bezrobocia",
        x = "Rok")
 ```
 
 ```{r}
+#| label: fig_3
+#| fig-cap: "Średnia krajowa stopa bezrobocia w ostatnich 10 latach (małe powiaty)"
 data_mod |> filter(Ludność < 100000) |>
-  group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = mean(wskaznik_bezrobocia)) |>
+  group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = sum(Bezrobotni)/sum(Ludność_wiek_prod)) |>
   ggplot(aes(x=factor(Rok), y=srednie_bezrobocie, fill=Płeć)) + 
   geom_bar(stat="identity", position = "dodge") +
-  labs(title = "Średni krajowy wskaźnik bezrobocia w ostatnich 10 latach (małe powiaty)",
-       y = "Średni krajowy wskaźnik bezrobocia",
+  labs(y = "Stopa bezrobocia",
        x = "Rok")
 ```
 
-```{r}
-śr_r_bezrob_duże_miasta <- data_mod |> filter(Ludność >= 100000) |>
-  group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = round(mean(wskaznik_bezrobocia),3))
-
-tab <- śr_r_bezrob_duże_miasta |> pivot_wider(
-  names_from = Rok,
-  values_from = srednie_bezrobocie
-)
-tab
-
-śr_r_bezrob_male_miasta <- data_mod |> filter(Ludność < 100000) |>
-  group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = round(mean(wskaznik_bezrobocia),3))
-
-tab2 <- śr_r_bezrob_male_miasta |> pivot_wider(
-  names_from = Rok,
-  values_from = srednie_bezrobocie
-)
-tab2
+```         
 ```
 
 ```         
 ```
 
 ```{r}
+#| label: fig_4
+#| fig-cap: "Rozkład stopy bezrobocia w powiatach przez ostanie 10 lat"
 data_mod |> filter(Płeć == "ogółem") |>
   group_by(Rok) |> 
-  ggplot(aes(x=factor(Rok), y=wskaznik_bezrobocia)) + geom_boxplot()
+  ggplot(aes(x=factor(Rok), y=stopa_bezrobocia)) + geom_boxplot() + 
+  labs(x = "Rok",
+       y = "Stopa bezrobocia")
 ```
 
 ```{r}
+#| label: fig_5
+#| fig-cap: "Zależność stopy bezrobocia od wynagrodzenia brutto w 2024 roku"
 data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
-  ggplot(aes(x=Wynagrodzenie_przeciętne, y=wskaznik_bezrobocia)) +
+  ggplot(aes(x=Wynagrodzenie_przeciętne, y=stopa_bezrobocia)) +
   geom_point() +
-  geom_smooth(method="lm", se=FALSE)
+  geom_smooth(method="lm", se=FALSE) +
+  labs(x = "Wynagrodzenie przeciętne",
+       y = "Stopa bezrobocia")
 ```
 
 ```{r}
+#| label: fig_6
+#| fig-cap: "Zależność liczby bezrobotnych od ludności w 2024 r. (skala logarytmiczna)"
 data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
   ggplot(aes(x=log(Ludność), y=log(Bezrobotni))) +
   geom_point() +
-  geom_smooth(method="lm", se=FALSE)
+  geom_smooth(method="lm", se=FALSE) +
+  labs(x = "Liczba mieszkańców powiatu",
+       y = 'Liczba bezrobotnych')
 ```
 
 ```{r}
+#| label: fig_7
+#| fig-cap: "Zależność liczby bezrobotnych od ludności w wieku produkcyjnym w 2024 r. (skala logarytmiczna)"
 data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
   ggplot(aes(x=log(Ludność_wiek_prod), y=log(Bezrobotni))) +
   geom_point() +
-  geom_smooth(method="lm", se=FALSE)
+  geom_smooth(method="lm", se=FALSE) +
+  labs(x = "Liczba mieszkańców powiatu w wieku produkcyjnym",
+       y = "Liczba bezrobotnych")
 ```
