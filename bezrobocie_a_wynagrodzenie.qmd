@@ -2,7 +2,10 @@
 title: "Analiza bezrobocia rejestrowanego w Polsce w latach 2015-2024 na poziomie powiatów"
 format: pdf
 editor: visual
+author: "Konrad Słotta i Kacper Łazurkiewicz"
 lang: pl
+bibliography: bezrobocie_bibliografia.bib
+nocite: "@*"
 crossref:
   fig-title: "Rysunek"
 execute:
@@ -10,6 +13,8 @@ execute:
   warning: false
   message: false
 ---
+
+## Wstęp
 
 ### Czym jest bezrobocie rejestrowane?
 
@@ -61,7 +66,7 @@ data <- read.csv("sprawozdanie1_dane.csv")
 
 ## Analiza danych
 
-### Obliczanie stopy bezrobocia rejestrowanego
+### Obliczanie krajowej stopy bezrobocia rejestrowanego
 
 Stopa bezrobocia rejestrowanego to stosunek liczby osób bezrobotnych do całkowitej liczby ludności w wieku produkcyjnym. Na podstawie przyjętych danych powiatowych obliczyliśmy krajową stopę bezrobocia w poszczególnych latach z podziałem na płeć. Wyniki zostały przedstawione na wykresie słupkowym poniżej.
 
@@ -79,7 +84,11 @@ data_mod |> group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = sum(Bezrobot
        x = "Rok")
 ```
 
-Na
+Na powyższym wykresie widzimy, że w latach 2015-2024 krajowa stopa bezrobocia wykazywała trend malejący z przejściowym wzrostem w 2020 roku. Ten okres pokrywa się z początkiem pandemii COVID-19, która wywołała szok gospodarczy doprowadzający do masowych zwolnień w wielu miejscach pracy. W roku 2021 i 2022 bezrobocie znowu zaczyna spadać a następnie stabilizuje się na poziomie między 3% a 4%. Warto odnotować także, że w każdym roku stopa bezrobocia dla kobiet była wyższa niż dla mężczyzn.
+
+### Stopa bezrobocia dla powiatów liczących powyżej i poniżej 100 tyś. mieszkańców
+
+Sprawdzimy teraz, czy wartość stopy bezrobocia w poszczególnych latach wygląda tak samo w liczniejszych względem ludności powiatach, jak w mniej licznych. Za „liczniejszy" powiat uznajemy taki, w którym mieszka co najmniej 100 tysięcy mieszkańców. Wyniki analizy zostały przedstawione na dwóch kolejnych wykresach (Rysunek 2 i 3).
 
 ```{r}
 #| label: fig_2
@@ -102,6 +111,8 @@ data_mod |> filter(Ludność < 100000) |>
   labs(y = "Stopa bezrobocia",
        x = "Rok")
 ```
+
+Na powyższych wykresach widzimy, że zarówno trend spadkowy z nagłym wzrostem w 2020, jak i wyższe bezrobocie wśród kobiet, zostają utrzymane w obu przypadkach. Zauważalną różnicą jest natomiast fakt, że mniej liczne pod względem ludności powiaty charakteryzują się wyższą stopą bezrobocia we wszystkich badanych latach. Różnica ta wynosi od około 1,5 do 3 punktów procentowych.
 
 ```{r}
 duze <- data_mod |>
@@ -174,3 +185,5 @@ data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
   labs(x = "Liczba mieszkańców powiatu w wieku produkcyjnym",
        y = "Liczba bezrobotnych")
 ```
+
+# Bibliografia
