@@ -142,7 +142,9 @@ knitr::kable(
 )
 
 ```
+### Rozkład stopy bezrobocia w powiatach
 
+Na podstawie przyjętych danych obliczymy teraz stopę bezrobocia dla każdego powiatu w każdym roku. Sprawdzimy, jak wygląda rozkład stopy bezrobocia w powiatach dla każdego roku. Wyniki zostały przedstawione na wykresie pudełkowym poniżej (Rysunek 4).
 ```{r}
 #| label: fig_4
 #| fig-cap: "Rozkład stopy bezrobocia w powiatach przez ostanie 10 lat"
@@ -152,7 +154,10 @@ data_mod |> filter(Płeć == "ogółem") |>
   labs(x = "Rok",
        y = "Stopa bezrobocia")
 ```
+Na wykresie obserwujemy podobne zależności co na wykresach z krajową stopą bezrobocia. Mediana powiatowej stopy bezrobocia maleje od 2015 do 2019 roku z późniejszym skokiem w górę w 2020 roku. Później natomiast znowu maleje i stabilizuje się na poziomie około 3,75%. Dodatkowo, wraz z medianą maleje także rozstęp międzykwartylowy, co oznacza, że różnice w stopach bezrobocia między „typowymi” powiatami maleją, zatem bezrobocie staje się coraz bardziej wyrównane w powiatach w kolejnych latach. Rozkłady stóp bezrobocia w każdym roku są prawostronnie skośne. Oznacza to, że w każdym roku istnieją takie powiaty ze stosunkowo wysokim bezrobociem.
 
+### Czy istnieje zależnośc między stopą bezrobocia, a wynagrodzeniem brutto w powiecie?
+Żeby sprawdzić, czy istnieje zależność liniowa wykonamy wykres punktowy wartości stóp bezrobocia od wynagrodzenia przeciętnego brutto w poszczególnych powiatach. Poniższy wykres prezentuje te dane dla 2024 roku (Rysunek 5).
 ```{r}
 #| label: fig_5
 #| fig-cap: "Zależność stopy bezrobocia od wynagrodzenia brutto w 2024 roku"
@@ -163,7 +168,11 @@ data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
   labs(x = "Wynagrodzenie przeciętne",
        y = "Stopa bezrobocia")
 ```
-
+Na powyższym wykresie możemy zaobserwować, że istnieją powiaty zarówno ze stosunkowo niskim bezrobociem i wynagrodzeniem, jak i powiaty z wysokim wynagrodzeniem i niskim bezrobociem. Większość danych tworzy „chmurę", która jest słabo dopasowana do linii regresji. Stąd wnioskujemy, że dane są słabo skorelowane. Możemy to potwierdzić obliczając współczynnik korelacji Pearsona dla każdego roku.
+```{r}
+data_mod |> filter(Płeć == "ogółem") |> group_by(Rok) |> summarize(r = cor(stopa_bezrobocia, Wynagrodzenie_przeciętne))
+```
+Na podstawie powyższych danych widzimy, że w każdym roku współczynnik korelacji utrzymuje się na poziomie ok. -0,3, co oznacza, że stopa bezrobocia jest słabo skorelowana z wynagrodzeniem przeciętnym brutto.
 ```{r}
 #| label: fig_6
 #| fig-cap: "Zależność liczby bezrobotnych od ludności w 2024 r. (skala logarytmiczna)"
