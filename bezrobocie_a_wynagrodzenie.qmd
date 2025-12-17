@@ -58,6 +58,8 @@ Moja propozycja modyfikacji(jeśli potrzebna)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(knitr)
+library(kableExtra)
 ```
 
 ```{r}
@@ -168,24 +170,61 @@ data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
   labs(x = "Wynagrodzenie przeciętne",
        y = "Stopa bezrobocia")
 ```
-Na powyższym wykresie możemy zaobserwować, że istnieją powiaty zarówno ze stosunkowo niskim bezrobociem i wynagrodzeniem, jak i powiaty z wysokim wynagrodzeniem i niskim bezrobociem. Większość danych tworzy „chmurę", która jest słabo dopasowana do linii regresji. Stąd wnioskujemy, że dane są słabo skorelowane. Możemy to potwierdzić obliczając współczynnik korelacji Pearsona dla każdego roku.
+Na powyższym wykresie możemy zaobserwować, że istnieją powiaty zarówno ze stosunkowo niskim bezrobociem i wynagrodzeniem, jak i powiaty z wysokim wynagrodzeniem i niskim bezrobociem. Większość danych tworzy „chmurę", która jest słabo dopasowana do linii regresji. Stąd wnioskujemy, że dane są słabo skorelowane. Możemy sprawdzić, czy dane będą także słabo skorelowane dla poprzednich lat, obliczając współczynnik korelacji Pearsona dla każdego roku.
 ```{r}
-data_mod |> filter(Płeć == "ogółem") |> group_by(Rok) |> summarize(r = cor(stopa_bezrobocia, Wynagrodzenie_przeciętne))
+tab <- data_mod |> filter(Płeć == "ogółem") |> group_by(Rok) |> summarize(r = round(cor(stopa_bezrobocia, Wynagrodzenie_przeciętne),2))
+
+tab_t <- cbind(
+  Rok = "r",
+  t(tab$r)
+)
+
+colnames(tab_t) <- c("Rok", tab$Rok)
+
+tab_t |>
+  kable(
+    caption = "Korelacja stopy bezrobocia z wynagrodzeniem przeciętnym brutto",
+    digits = 2,
+    align = "c"
+  ) |>
+  kable_styling(
+    full_width = FALSE,
+    bootstrap_options = c("striped", "hover")
+  )
 ```
-Na podstawie powyższych danych widzimy, że w każdym roku współczynnik korelacji utrzymuje się na poziomie ok. -0,3, co oznacza, że stopa bezrobocia jest słabo skorelowana z wynagrodzeniem przeciętnym brutto.
+Na podstawie powyższych danych widzimy, że w każdym roku współczynnik korelacji utrzymuje się na poziomie ok. -0.3, co oznacza, że stopa bezrobocia jest słabo skorelowana z wynagrodzeniem przeciętnym brutto.
+
+### Badanie zależności między ludnością w wieku produkcyjnym a liczbą bezrobotnych
+
+Zbadamy teraz zależność liczby bezrobotnych od ludności w wieku produkcyjnym w powiatach. Dla danych dotyczących ludności możemy zaobserwować dużą dysproporcję w powiatach. W Polsce istnieją zarówno powiaty z bardzo małą liczbą ludności, jak i wielkie aglomeracje miejskie. W poniższej tabelce został pokazany rozkład danych ludności w wieku produkcyjnym w powiatach dla lat 2015-2024.
+```{r}
+#| label: tab_q
+tabela <- data_mod |> filter(Płeć == "ogółem") |>
+  group_by(Rok) |>
+  summarize(
+    Min = min(Ludność_wiek_prod),
+    Q1 = quantile(Ludność_wiek_prod, 0.25),
+    Mediana = quantile(Ludność_wiek_prod, 0.50),
+    Q3 = quantile(Ludność_wiek_prod, 0.75),
+    Max = max(Ludność_wiek_prod)
+  )
+
+
+tabela |>
+  kable(
+    caption = "Rozkład ludności w wieku produkcyjnym w powiatach",
+    digits = 2,
+    align = "c"
+  ) |>
+  kable_styling(
+    full_width = FALSE,
+    bootstrap_options = c("striped", "hover")
+  )
+
+```
+Zauważmy, że wartości maksymalne sięgają aż do miliona, co jest bardzo znaczącą różnicą względem kwartyli nie przekraczających wartości nawet stu tysięcy osób. Wnioskujemy stąd prawostronną skośność rozkładu. Sprawdzimy zatem zależność między liczbą osób bezrobotnych a ludnością w wieku produkcyjnym posługując się wykresem punktowym z osiami w skali logarytmicznej (Rysunek 6).
 ```{r}
 #| label: fig_6
-#| fig-cap: "Zależność liczby bezrobotnych od ludności w 2024 r. (skala logarytmiczna)"
-data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
-  ggplot(aes(x=log(Ludność), y=log(Bezrobotni))) +
-  geom_point() +
-  geom_smooth(method="lm", se=FALSE) +
-  labs(x = "Liczba mieszkańców powiatu",
-       y = 'Liczba bezrobotnych')
-```
-
-```{r}
-#| label: fig_7
 #| fig-cap: "Zależność liczby bezrobotnych od ludności w wieku produkcyjnym w 2024 r. (skala logarytmiczna)"
 data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
   ggplot(aes(x=log(Ludność_wiek_prod), y=log(Bezrobotni))) +
@@ -194,5 +233,43 @@ data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
   labs(x = "Liczba mieszkańców powiatu w wieku produkcyjnym",
        y = "Liczba bezrobotnych")
 ```
+
+```{r}
+
+data_og_2024 <- data_mod |> filter(Płeć == "ogółem", Rok == 2024)
+model <- lm(log(Bezrobotni) ~ log(Ludność_wiek_prod), data=data_og_2024)
+```
+
+Pomimo tego, że punkty nie są dopasowane idealnie, to jednak układają się wzdłuż linii prostej. Dodatkowo, obserwujemy, że im więcej ludności w wieku produkcyjnym, tym jest więcej bezrobotnych w powiecie. Wnioskujemy zatem, że zachodzi dodatnia zależność liniowa w skali logarytmicznej. Oznacza to, że zależność między oryginalnymi zmiennymi ma charakter potęgowy. Dostajemy zależność
+$$
+\text{Bezrobotni} = a \cdot \text{(Ludność w wieku produkcyjnym)}^b.
+$$
+Wyliczając za pomocą regresji liniowej dostajemy współczynniki
+$$
+a = `r round(coef(model)[1], 2)` \quad | \ b = `r round(coef(model)[2], 2)`.
+$$
+Obliczymy teraz współczynnik korelacji Pearsona dla zlogarytmowanych danych dla lat 2015-2024, żeby sprawdzić, czy w poprzednich latach zachodzi podobna zależność.
+```{r}
+tab <- data_mod |> filter(Płeć == "ogółem") |> group_by(Rok) |> summarize(r = round(cor(log(Bezrobotni), log(Ludność_wiek_prod)),2))
+
+tab_t <- cbind(
+  Rok = "r",
+  t(tab$r)
+)
+
+colnames(tab_t) <- c("Rok", tab$Rok)
+
+tab_t |>
+  kable(
+    caption = "Korelacja liczby osób bezrobotnych z ludnością w wieku produkcyjnym (skala logarytmiczna)",
+    digits = 2,
+    align = "c"
+  ) |>
+  kable_styling(
+    full_width = FALSE,
+    bootstrap_options = c("striped", "hover")
+  )
+```
+Na podstawie powyższych danych widzimy, że w każdym roku współczynnik korelacji utrzymuje się na poziomie ok. 0.75, co oznacza, że liczba osób bezrobotnych jest  skorelowana dodatnio z ludnością w wieku produkcyjnym.
 
 # Bibliografia
