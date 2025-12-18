@@ -15,6 +15,17 @@ execute:
 ---
 
 ## Wstęp
+Bezrobocie rejestrowane jest jednym z kluczowych wskaźników charakteryzujących sytuację na rynku pracy. Jego poziom i zróżnicowanie w różnych regionach mogą nam powiedzieć dużo o kondycji społeczno-gospodarczej państwa. W poniższym raporcie sprawdzimy, jak bezrobocie rejestrowane zmieniało się w Polsce w latach 2015-2024 na poziomie powiatów. Przede wszystkim spróbujemy odpowiedzieć na następujące pytania:
+
+1. Czy poziom bezrobocia spadał, czy rósł w ciągu badanych lat? Jak rozkładał się w tym czasie poziom bezrobocia w poszczególnych powiatach?
+
+2. Czy jako bezrobotne rejestrują się częściej kobiety, czy mężczyźni w Polsce? Dodatkowo, czy istnieją powiaty, w których ta tendencja jest odwrotna do krajowej?
+
+3. Czy w mniej licznych względem ludności powiatach (poniżej 100 tyś. mieszkańców) poziom bezrobocia jest wyższy, niż w bardziej licznych (powyżej 100 tyś. mieszkańców)?
+
+4. Czy stopa bezrobocia jest wyższa w powiatach, gdzie jest niższe przeciętne wynagrodzenie brutto, czy w tych, gdzie jest wyższe?
+
+Nasza analiza oparta jest o dane Banku Danych Lokalnych Głównego Urzędu Statystycznego.
 
 ### Czym jest bezrobocie rejestrowane?
 
@@ -40,19 +51,6 @@ Zmienna "Ludność_wiek_prod" mówi nam o liczbie mieszkańców danego powiatu k
 
 Zmienna "Wynagrodzenie_przeciętne" mówi nam o średnich zarobkach brutto przez mieszkańców danego powiatu (ta zmienna nie ma rozróżnienia na płcie). Brak danych jest spowodowany tym że GUS nie oferuje informacji o wynagrodzeniach dla mężczyzn i kobiet osobno, tylko dla ogółu.
 
-### Pytania badawcze
-
-Te oryginalne a) Czy jako bezrobotne rejestrują się częściej kobiety, czy mężczyźni w Polsce? b) Czy wskaźnik bezrobocia jest wyższy w powiatach, gdzie jest niższe przeciętne wynagrodzenie brutto, czy wyższe? c) Czy zależności a) i b) wyglądają inaczej w dużych miastach (miastach na prawach powiatu, powyżej 100 tys. mieszkańców)? d) Czy zależności a) i b) są stałe w czasie, czy zmieniły się w ostatnich 10 latach?
-
-Moja propozycja modyfikacji(jeśli potrzebna)
-
-1)  Czy jako bezrobotne rejestrują się częściej kobiety, czy mężczyźni w Polsce w skali czasu? +1.1) Czy jako bezrobotne rejestrują się częściej kobiety w skali liczby kobiet, czy mężczyźni w skali liczby mężczyzn w Polsce w skali czasu?
-
-2)  Czy wskaźnik bezrobocia jest wyższy w powiatach, gdzie jest niższe przeciętne wynagrodzenie brutto, czy wyższe przeciętne wynagrodzenie brutto ? (to samo) ( w jakims konkternym roku?)
-
-3)  Czy zależność 1) i 1.1) wygląda inaczej w małych powiatach i w dużych powiatach(duże powiaty czyli powyżej 100tyś mieszkańców) ??(Niektóre powiaty mają +100tys mieszkancow a potem pozizej 100tys wiec takim kryterium moze zrobimy że (if max(Ludność(Ogółem,Rok)) \>100tys) to kwalifikujemy na duże powaity? )??
-
-## Wczytanie danych
 
 ```{r}
 library(ggplot2)
@@ -117,7 +115,7 @@ data_mod |> filter(Ludność < 100000) |>
 Na powyższych wykresach widzimy, że zarówno trend spadkowy z nagłym wzrostem w 2020, jak i wyższe bezrobocie wśród kobiet, zostają utrzymane w obu przypadkach. Zauważalną różnicą jest natomiast fakt, że mniej liczne pod względem ludności powiaty charakteryzują się wyższą stopą bezrobocia we wszystkich badanych latach. Różnica ta wynosi od około 1,5 do 3 punktów procentowych.
 
 
-Jak pokazaliśmy wcześniej, średnia krajowa stopa bezrobocia dla mężczyzn jest niższa w każdym roku od tej dla kobiet. Obliczając stopy bezrobocia dla poszczególnych powiatów widzimy, że większość z nich także jest wyższa dla kobiet. Lecz w każdym roku istniały pewne powiaty w których stopa bezrobocia była większa u mężczyzn niż u kobiet. Tabelka poniżej pokazuje ich liczbe w roku z pośród wszystkich 380 powiatów
+Jak pokazaliśmy wcześniej, średnia krajowa stopa bezrobocia dla mężczyzn jest niższa w każdym roku od tej dla kobiet. Obliczając stopy bezrobocia dla poszczególnych powiatów widzimy, że większość z nich także jest wyższa dla kobiet. Lecz w każdym roku istniały pewne powiaty w których stopa bezrobocia była większa u mężczyzn niż u kobiet. Tabelka poniżej pokazuje ich liczbę w roku z pośród wszystkich 380 powiatów
 ```{r}
 wyniki <- data.frame(
   Indeks_data_mod = integer(),
@@ -173,7 +171,7 @@ knitr::kable(
   caption = "Liczba powiatów w każdym roku, w których mężczyźni mieli wyższe bezrobocie niż kobiety"
 )
 ```
-Można zauważyć że od 2015 do 2019 roku liczba powiatów w których stopa bezrobocia u mężczyzn jest większa od kobiet, maleje w czasie. Od 2020 roku pomijając przejście z 2021 do 2022 liczba powiatów z opisaną włąsnością wzrasta. W 2024 osiąga makimum równe 53 powiaty
+Można zauważyć że od 2015 do 2019 roku liczba powiatów w których stopa bezrobocia u mężczyzn jest większa od kobiet, maleje w czasie. Od 2020 roku pomijając przejście z 2021 do 2022 liczba powiatów z opisaną własnością wzrasta. W 2024 osiąga maksimum równe 53 powiaty.
 
 
 
@@ -197,34 +195,6 @@ knitr::kable(
 )
 ```
 
-```{r}
-duze <- data_mod |>
-  filter(Ludność >= 100000) |>
-  mutate(Typ_miasta = "Duże miasta") |>
-  group_by(Rok, Płeć, Typ_miasta) |>
-  summarize(srednie_bezrobocie = round(mean(stopa_bezrobocia),3), .groups = "drop")
-
-male <- data_mod |>
-  filter(Ludność < 100000) |>
-  mutate(Typ_miasta = "Małe miasta") |>
-  group_by(Rok, Płeć, Typ_miasta) |>
-  summarize(srednie_bezrobocie = round(mean(stopa_bezrobocia),3), .groups = "drop")
-
-wszystkie <- bind_rows(duze, male)
-
-tab <- wszystkie |>
-  pivot_wider(
-    names_from = Rok,
-    values_from = srednie_bezrobocie
-  )
-
-knitr::kable(
-  tab,
-  booktabs = FALSE,
-  caption = "Średnia stopa bezrobocia w miastach według typów, płci i roku"
-)
-
-```
 ### Rozkład stopy bezrobocia w powiatach
 
 Na podstawie przyjętych danych obliczymy teraz stopę bezrobocia dla każdego powiatu w każdym roku. Sprawdzimy, jak wygląda rozkład stopy bezrobocia w powiatach dla każdego roku. Wyniki zostały przedstawione na wykresie pudełkowym poniżej (Rysunek 4).
@@ -239,7 +209,7 @@ data_mod |> filter(Płeć == "ogółem") |>
 ```
 Na wykresie obserwujemy podobne zależności co na wykresach z krajową stopą bezrobocia. Mediana powiatowej stopy bezrobocia maleje od 2015 do 2019 roku z późniejszym skokiem w górę w 2020 roku. Później natomiast znowu maleje i stabilizuje się na poziomie około 3,75%. Dodatkowo, wraz z medianą maleje także rozstęp międzykwartylowy, co oznacza, że różnice w stopach bezrobocia między „typowymi” powiatami maleją, zatem bezrobocie staje się coraz bardziej wyrównane w powiatach w kolejnych latach. Rozkłady stóp bezrobocia w każdym roku są prawostronnie skośne. Oznacza to, że w każdym roku istnieją takie powiaty ze stosunkowo wysokim bezrobociem.
 
-### Czy istnieje zależnośc między stopą bezrobocia, a wynagrodzeniem brutto w powiecie?
+### Czy istnieje zależność między stopą bezrobocia, a wynagrodzeniem brutto w powiecie?
 Żeby sprawdzić, czy istnieje zależność liniowa wykonamy wykres punktowy wartości stóp bezrobocia od wynagrodzenia przeciętnego brutto w poszczególnych powiatach. Poniższy wykres prezentuje te dane dla 2024 roku (Rysunek 5).
 ```{r}
 #| label: fig_5
@@ -351,6 +321,6 @@ tab_t |>
     bootstrap_options = c("striped", "hover")
   )
 ```
-Na podstawie powyższych danych widzimy, że w każdym roku współczynnik korelacji utrzymuje się na poziomie ok. 0.75, co oznacza, że liczba osób bezrobotnych jest  skorelowana dodatnio z ludnością w wieku produkcyjnym.
+Na podstawie powyższych danych widzimy, że w każdym roku współczynnik korelacji utrzymuje się na poziomie ok. 0.68, co oznacza, że liczba osób bezrobotnych jest  skorelowana dodatnio z ludnością w wieku produkcyjnym.
 
 # Bibliografia
