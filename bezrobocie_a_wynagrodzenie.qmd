@@ -14,7 +14,7 @@ execute:
   message: false
 ---
 
-## Wstęp
+# Wstęp
 Bezrobocie rejestrowane jest jednym z kluczowych wskaźników charakteryzujących sytuację na rynku pracy. Jego poziom i zróżnicowanie w różnych regionach mogą nam powiedzieć dużo o kondycji społeczno-gospodarczej państwa. W poniższym raporcie sprawdzimy, jak bezrobocie rejestrowane zmieniało się w Polsce w latach 2015-2024 na poziomie powiatów. Przede wszystkim spróbujemy odpowiedzieć na następujące pytania:
 
 1. Czy poziom bezrobocia spadał, czy rósł w ciągu badanych lat? Jak rozkładał się w tym czasie poziom bezrobocia w poszczególnych powiatach?
@@ -27,29 +27,30 @@ Bezrobocie rejestrowane jest jednym z kluczowych wskaźników charakteryzującyc
 
 Nasza analiza oparta jest o dane Banku Danych Lokalnych Głównego Urzędu Statystycznego.
 
-### Czym jest bezrobocie rejestrowane?
+# Czym jest bezrobocie rejestrowane?
 
 Bezrobocie rejestrowane to forma bezrobocia obejmująca osoby, które zgłosiły się do powiatowego urzędu pracy i zostały wpisane do oficjalnego rejestru bezrobotnych. Oznacza to, że dana osoba nie ma zatrudnienia, aktywnie poszukuje pracy i jest gotowa ją podjąć, spełniając jednocześnie warunki określone w przepisach. Ludzie rejestrują się w urzędzie pracy z różnych powodów – przede wszystkim w celu znalezienia zatrudnienia za pośrednictwem urzędu, ale także po to, aby uzyskać wsparcie finansowe w postaci zasiłku, jeśli spełniają kryteria jego przyznania. Rejestracja zapewnia także prawo do ubezpieczenia zdrowotnego opłacanego przez państwo, co ma znaczenie szczególnie dla osób pozostających bez pracy i bez innego tytułu do ubezpieczenia. Dodatkowo zarejestrowani bezrobotni mogą korzystać z ofert bezpłatnych szkoleń, kursów zawodowych, staży czy programów aktywizacyjnych, które pomagają w powrocie na rynek pracy. Warto zaznaczyć, że bezrobocie rejestrowane jest tylko jedną z miar bezrobocia, ponieważ obejmuje wyłącznie osoby, które faktycznie zgłosiły się do urzędu – nie uwzględnia osób poszukujących pracy na własną rękę ani tych, które pracują nieformalnie (na czarno), dlatego nie odzwierciedla całkowitej liczby osób pozostających bez zatrudnienia.
 
-### Jak zbierane są dane?
+# Jak GUS zbiera dane?
 
 Podstawowymi sposobami zbierania danych przez GUS są źródła administracyjne (dane publiczne), spisy powszechne oraz badania ankietowe. Źródła administracyjne obejmują informacje pochodzące z rejestrów prowadzonych przez instytucje publiczne, takie jak urzędy skarbowe, Zakład Ubezpieczeń Społecznych czy urzędy pracy. Spisy powszechne są badaniami obejmującymi całą populację lub jej dużą część i pozwalają na uzyskanie szczegółowych danych dotyczących m.in. ludności, mieszkań i gospodarstw domowych. Natomiast badania ankietowe prowadzone przez GUS mogą mieć charakter ciągły, cykliczny lub jednorazowy i są realizowane na wybranej próbie respondentów, co umożliwia systematyczne monitorowanie zjawisk społecznych i gospodarczych.
 
-### Opisanie Zmiennych w danych
+# Opisanie zmiennych w danych
+Plik CSV z danymi zawiera następujące zmienne:
 
-Zmienna "Powiat" to nazwa powiatu w którym zostały zebrane dane.
+- Zmienna „Powiat" to nazwa powiatu w którym zostały zebrane dane.
 
-Zmienna "Kod" to numer statystyczny konkretnego powiatu (każdy powiat ma swój indywidualny Kod).
+- Zmienna „Kod" to numer statystyczny konkretnego powiatu (każdy powiat ma swój indywidualny Kod).
 
-Zmienna "Płeć" przyjmuje 3 stany (Mężczyzna, Kobieta, Ogółem) czyli mówi nam czy szereg pozostałych zmiennych był rozpatrywany pod kątem jakiejś konkretnej płci czy badany był ogółem.
+- Zmienna „Płeć" przyjmuje 3 stany (Mężczyzna, Kobieta, Ogółem) czyli mówi nam czy szereg pozostałych zmiennych był rozpatrywany pod kątem jakiejś konkretnej płci czy badany był ogółem.
 
-Zmienna "Ludność" mówi nam ile osób było mieszkańcami danego powiatu na końcu konkretnego roku.
+- Zmienna „Ludność" mówi nam ile osób było mieszkańcami danego powiatu na końcu konkretnego roku.
 
-Zmienna "Bezrobotni" mówi nam o liczbie mieszkańców danego powiatu którzy mają status Bezrobocia Rejestrowanego w danym roku (tutaj nie wiemy nic o bezrobociu nierejestrowanym).
+- Zmienna „Bezrobotni" mówi nam o liczbie mieszkańców danego powiatu którzy mają status Bezrobocia Rejestrowanego w danym roku (tutaj nie wiemy nic o bezrobociu nierejestrowanym).
 
-Zmienna "Ludność_wiek_prod" mówi nam o liczbie mieszkańców danego powiatu którzy są w wieku produkcyjnym (miedzy 18 a 59/64 odpowiednio dla kobiet/mężczyzn) na koniec danego roku.
+- Zmienna „Ludność_wiek_prod" mówi nam o liczbie mieszkańców danego powiatu którzy są w wieku produkcyjnym (miedzy 18 a 59/64 odpowiednio dla kobiet/mężczyzn) na koniec danego roku.
 
-Zmienna "Wynagrodzenie_przeciętne" mówi nam o średnich zarobkach brutto przez mieszkańców danego powiatu (ta zmienna nie ma rozróżnienia na płcie). Brak danych jest spowodowany tym że GUS nie oferuje informacji o wynagrodzeniach dla mężczyzn i kobiet osobno, tylko dla ogółu.
+- Zmienna „Wynagrodzenie_przeciętne" mówi nam o średnich zarobkach miesięcznych brutto przez mieszkańców danego powiatu (ta zmienna nie ma rozróżnienia na płcie). Brak danych jest spowodowany tym że GUS nie oferuje informacji o wynagrodzeniach dla mężczyzn i kobiet osobno, tylko dla ogółu.
 
 
 ```{r}
@@ -64,9 +65,7 @@ library(kableExtra)
 data <- read.csv("sprawozdanie1_dane.csv")
 ```
 
-## Analiza danych
-
-### Obliczanie krajowej stopy bezrobocia rejestrowanego
+# Obliczanie krajowej stopy bezrobocia rejestrowanego
 
 Stopa bezrobocia rejestrowanego to stosunek liczby osób bezrobotnych do całkowitej liczby ludności w wieku produkcyjnym. Na podstawie przyjętych danych powiatowych obliczyliśmy krajową stopę bezrobocia w poszczególnych latach z podziałem na płeć. Wyniki zostały przedstawione na wykresie słupkowym poniżej.
 
@@ -76,7 +75,7 @@ data_mod <- data |> mutate(stopa_bezrobocia = Bezrobotni/Ludność_wiek_prod)
 
 ```{r}
 #| label: fig_1
-#| fig-cap: "Krajowa stopa bezrobocia w ostatnich 10 latach"
+#| fig-cap: "Krajowa stopa bezrobocia w latach 2015-2024"
 data_mod |> group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = sum(Bezrobotni)/sum(Ludność_wiek_prod)) |>
   ggplot(aes(x=factor(Rok), y=srednie_bezrobocie, fill=Płeć)) + 
   geom_bar(stat="identity", position = "dodge") +
@@ -86,14 +85,19 @@ data_mod |> group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = sum(Bezrobot
 
 Na powyższym wykresie widzimy, że w latach 2015-2024 krajowa stopa bezrobocia wykazywała trend malejący z przejściowym wzrostem w 2020 roku. Ten okres pokrywa się z początkiem pandemii COVID-19, która wywołała szok gospodarczy doprowadzający do masowych zwolnień w wielu miejscach pracy. W roku 2021 i 2022 bezrobocie znowu zaczyna spadać a następnie stabilizuje się na poziomie między 3% a 4%. Warto odnotować także, że w każdym roku stopa bezrobocia dla kobiet była wyższa niż dla mężczyzn.
 
-### Stopa bezrobocia dla powiatów liczących powyżej i poniżej 100 tyś. mieszkańców
+# Stopa bezrobocia dla powiatów liczących powyżej i poniżej 100 tyś. mieszkańców
 
 Sprawdzimy teraz, czy wartość stopy bezrobocia w poszczególnych latach wygląda tak samo w liczniejszych względem ludności powiatach, jak w mniej licznych. Za „liczniejszy" powiat uznajemy taki, w którym mieszka co najmniej 100 tysięcy mieszkańców. Wyniki analizy zostały przedstawione na dwóch kolejnych wykresach (Rysunek 2 i 3).
 
 ```{r}
 #| label: fig_2
-#| fig-cap: "Średnia krajowa stopa bezrobocia w ostatnich 10 latach (duże powiaty)"
-data_mod |> filter(Ludność >= 100000) |>
+#| fig-cap: "Średnia stopa bezrobocia w powiatach z liczbą mieszkańców powyżej 100 tyś. w latach 2015-2024"
+
+duze_powiaty <- data_mod |>
+  filter(Płeć == "ogółem", Ludność >= 100000) |>
+  distinct(Rok, Powiat)
+
+data_mod |> semi_join(duze_powiaty, by = c("Rok", "Powiat")) |>
   group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = sum(Bezrobotni)/sum(Ludność_wiek_prod)) |>
   ggplot(aes(x=factor(Rok), y=srednie_bezrobocie, fill=Płeć)) + 
   geom_bar(stat="identity", position = "dodge") +
@@ -103,8 +107,12 @@ data_mod |> filter(Ludność >= 100000) |>
 
 ```{r}
 #| label: fig_3
-#| fig-cap: "Średnia krajowa stopa bezrobocia w ostatnich 10 latach (małe powiaty)"
-data_mod |> filter(Ludność < 100000) |>
+#| fig-cap: "Średnia stopa bezrobocia w powiatach z liczbą mieszkańców poniżej 100 tyś. w latach 2015-2024"
+male_powiaty <- data_mod |>
+  filter(Płeć == "ogółem", Ludność < 100000) |>
+  distinct(Rok, Powiat)
+
+data_mod |> semi_join(male_powiaty, by = c("Rok", "Powiat")) |>
   group_by(Rok, Płeć) |> summarize(srednie_bezrobocie = sum(Bezrobotni)/sum(Ludność_wiek_prod)) |>
   ggplot(aes(x=factor(Rok), y=srednie_bezrobocie, fill=Płeć)) + 
   geom_bar(stat="identity", position = "dodge") +
@@ -112,11 +120,14 @@ data_mod |> filter(Ludność < 100000) |>
        x = "Rok")
 ```
 
-Na powyższych wykresach widzimy, że zarówno trend spadkowy z nagłym wzrostem w 2020, jak i wyższe bezrobocie wśród kobiet, zostają utrzymane w obu przypadkach. Zauważalną różnicą jest natomiast fakt, że mniej liczne pod względem ludności powiaty charakteryzują się wyższą stopą bezrobocia we wszystkich badanych latach. Różnica ta wynosi od około 1,5 do 3 punktów procentowych.
+Na powyższych wykresach widzimy, że zarówno trend spadkowy z nagłym wzrostem w 2020, jak i wyższe bezrobocie wśród kobiet, zostają utrzymane w obu przypadkach. Zauważalną różnicą jest natomiast fakt, że mniej liczne pod względem ludności powiaty charakteryzują się wyższą stopą bezrobocia we wszystkich badanych latach. Różnica ta wynosi od około 1 do 2 punktów procentowych.
 
+# Powiaty z wyższą stopą bezrobocia dla mężczyzn niż dla kobiet
 
-Jak pokazaliśmy wcześniej, średnia krajowa stopa bezrobocia dla mężczyzn jest niższa w każdym roku od tej dla kobiet. Obliczając stopy bezrobocia dla poszczególnych powiatów widzimy, że większość z nich także jest wyższa dla kobiet. Lecz w każdym roku istniały pewne powiaty w których stopa bezrobocia była większa u mężczyzn niż u kobiet. Tabelka poniżej pokazuje ich liczbę w roku z pośród wszystkich 380 powiatów
+Jak pokazaliśmy wcześniej, krajowa stopa bezrobocia dla mężczyzn jest niższa w każdym roku od tej dla kobiet. Obliczając stopy bezrobocia dla poszczególnych powiatów widzimy, że większość z nich także jest wyższa dla kobiet. Lecz w każdym roku istniały pewne powiaty w których stopa bezrobocia była większa u mężczyzn niż u kobiet. Tabelka poniżej pokazuje ich liczbę w roku z pośród wszystkich 380 powiatów.
 ```{r}
+#| label: tbl_1
+
 wyniki <- data.frame(
   Indeks_data_mod = integer(),
   Powiat = character(),
@@ -168,7 +179,7 @@ tab_liczba_powiatow <- wyniki |>
 knitr::kable(
   tab_liczba_powiatow,
   booktabs = FALSE,
-  caption = "Liczba powiatów w każdym roku, w których mężczyźni mieli wyższe bezrobocie niż kobiety"
+  caption = "Liczba powiatów w każdym roku, w których stopa bezrobocia dla mężczyzn była większa niż dla kobiet"
 )
 ```
 Można zauważyć że od 2015 do 2019 roku liczba powiatów w których stopa bezrobocia u mężczyzn jest większa od kobiet, maleje w czasie. Od 2020 roku pomijając przejście z 2021 do 2022 liczba powiatów z opisaną własnością wzrasta. W 2024 osiąga maksimum równe 53 powiaty.
@@ -179,6 +190,7 @@ Oprócz tego sprawdziliśmy czy istniały takie powiaty w których stopa bezrobo
 
 
 ```{r}
+#| label: tbl_2
 
 powiaty_count <- wyniki |>
   group_by(Powiat) |>
@@ -191,16 +203,16 @@ powiaty_df <- data.frame(Powiaty = powiaty_mezczyzni_zawsze_wieksze)
 knitr::kable(
   powiaty_df,
   booktabs = FALSE,
-  caption = "Lista powiatów w których mężczyźni mieli wyższe bezrobocie niż kobiety w każdym rozpatrywanym przez nas roku"
+  caption = "Lista powiatów, w których wyższa stopa bezrobocia dla mężczyzn niż dla kobiet, utzymywała się przez cały rozpatrywany okres"
 )
 ```
 
-### Rozkład stopy bezrobocia w powiatach
+# Rozkład stopy bezrobocia w powiatach
 
 Na podstawie przyjętych danych obliczymy teraz stopę bezrobocia dla każdego powiatu w każdym roku. Sprawdzimy, jak wygląda rozkład stopy bezrobocia w powiatach dla każdego roku. Wyniki zostały przedstawione na wykresie pudełkowym poniżej (Rysunek 4).
 ```{r}
 #| label: fig_4
-#| fig-cap: "Rozkład stopy bezrobocia w powiatach przez ostanie 10 lat"
+#| fig-cap: "Rozkład stopy bezrobocia w powiatach w latach 2015-2024"
 data_mod |> filter(Płeć == "ogółem") |>
   group_by(Rok) |> 
   ggplot(aes(x=factor(Rok), y=stopa_bezrobocia)) + geom_boxplot() + 
@@ -223,6 +235,8 @@ data_mod |> filter(Płeć == "ogółem", Rok == 2024) |>
 ```
 Na powyższym wykresie możemy zaobserwować, że istnieją powiaty zarówno ze stosunkowo niskim bezrobociem i wynagrodzeniem, jak i powiaty z wysokim wynagrodzeniem i niskim bezrobociem. Większość danych tworzy „chmurę", która jest słabo dopasowana do linii regresji. Stąd wnioskujemy, że dane są słabo skorelowane. Możemy sprawdzić, czy dane będą także słabo skorelowane dla poprzednich lat, obliczając współczynnik korelacji Pearsona dla każdego roku.
 ```{r}
+#| label: tbl_3
+
 tab <- data_mod |> filter(Płeć == "ogółem") |> group_by(Rok) |> summarize(r = round(cor(stopa_bezrobocia, Wynagrodzenie_przeciętne),2))
 
 tab_t <- cbind(
@@ -245,11 +259,12 @@ tab_t |>
 ```
 Na podstawie powyższych danych widzimy, że w każdym roku współczynnik korelacji utrzymuje się na poziomie ok. -0.3, co oznacza, że stopa bezrobocia jest słabo skorelowana z wynagrodzeniem przeciętnym brutto.
 
-### Badanie zależności między ludnością w wieku produkcyjnym a liczbą bezrobotnych
+# Badanie zależności między ludnością w wieku produkcyjnym a liczbą bezrobotnych
 
 Zbadamy teraz zależność liczby bezrobotnych od ludności w wieku produkcyjnym w powiatach. Dla danych dotyczących ludności możemy zaobserwować dużą dysproporcję w powiatach. W Polsce istnieją zarówno powiaty z bardzo małą liczbą ludności, jak i wielkie aglomeracje miejskie. W poniższej tabelce został pokazany rozkład danych ludności w wieku produkcyjnym w powiatach dla lat 2015-2024.
 ```{r}
-#| label: tab_q
+#| label: tbl_4
+
 tabela <- data_mod |> filter(Płeć == "ogółem") |>
   group_by(Rok) |>
   summarize(
@@ -301,6 +316,8 @@ a = `r round(coef(model)[1], 2)` \quad | \ b = `r round(coef(model)[2], 2)`.
 $$
 Obliczymy teraz współczynnik korelacji Pearsona dla zlogarytmowanych danych dla lat 2015-2024, żeby sprawdzić, czy w poprzednich latach zachodzi podobna zależność.
 ```{r}
+#| label: tbl_5
+
 tab <- data_mod |> filter(Płeć == "ogółem") |> group_by(Rok) |> summarize(r = round(cor(log(Bezrobotni), log(Ludność_wiek_prod)),2))
 
 tab_t <- cbind(
@@ -322,5 +339,8 @@ tab_t |>
   )
 ```
 Na podstawie powyższych danych widzimy, że w każdym roku współczynnik korelacji utrzymuje się na poziomie ok. 0.68, co oznacza, że liczba osób bezrobotnych jest  skorelowana dodatnio z ludnością w wieku produkcyjnym.
+
+# Podsumowanie analizy
+Podsumowując, z naszej analizy wynika, że w badanym okresie krajowa stopa bezrobocia wykazywała wyraźny trend malejący. Jedyny znaczący wzrost odnotowano w 2020 roku, co było bezpośrednim skutkiem szoku gospodarczego wywołanego pandemią COVID-19. W skali całego kraju bezrobocie rejestrowane jest trwale wyższe wśród kobiet niż wśród mężczyzn, jednakże w każdym roku istnieje także pewna grupa powiatów z tendencją odwrotną. Powiaty mniej liczne pod względem liczby mieszkańców charakteryzują się systematycznie wyższym bezrobociem, natomiast z każdym rokiem różnice te są coraz mniejsze. Liczba bezrobotnych wykazuje dodatnią zależność potęgową od liczby ludności w wieku produkcyjnym. Analiza wykazała jednak, że nie istnieje jednoznaczna korelacja między wysokością stopy bezrobocia a wysokością przeciętnego wynagrodzenia.
 
 # Bibliografia
