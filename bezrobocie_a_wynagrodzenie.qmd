@@ -116,6 +116,87 @@ data_mod |> filter(Ludność < 100000) |>
 
 Na powyższych wykresach widzimy, że zarówno trend spadkowy z nagłym wzrostem w 2020, jak i wyższe bezrobocie wśród kobiet, zostają utrzymane w obu przypadkach. Zauważalną różnicą jest natomiast fakt, że mniej liczne pod względem ludności powiaty charakteryzują się wyższą stopą bezrobocia we wszystkich badanych latach. Różnica ta wynosi od około 1,5 do 3 punktów procentowych.
 
+
+Jak pokazaliśmy wcześniej, średnia krajowa stopa bezrobocia dla mężczyzn jest niższa w każdym roku od tej dla kobiet. Obliczając stopy bezrobocia dla poszczególnych powiatów widzimy, że większość z nich także jest wyższa dla kobiet. Lecz w każdym roku istniały pewne powiaty w których stopa bezrobocia była większa u mężczyzn niż u kobiet. Tabelka poniżej pokazuje ich liczbe w roku z pośród wszystkich 380 powiatów
+```{r}
+wyniki <- data.frame(
+  Indeks_data_mod = integer(),
+  Powiat = character(),
+  Rok = integer(),
+  stopa_kobiety = numeric(),
+  stopa_mezczyzni = numeric()
+)
+
+powiaty <- unique(data_mod$Powiat)
+lata <- unique(data_mod$Rok)
+
+for (p in powiaty) {
+  for (r in lata) {
+    dane <- data_mod[
+      data_mod$Powiat == p &
+      data_mod$Rok == r &
+      data_mod$Płeć %in% c("kobiety", "mężczyźni"),
+    ]
+
+    if (nrow(dane) == 2) {
+      stopa_k <- dane$stopa_bezrobocia[dane$Płeć == "kobiety"]
+      stopa_m <- dane$stopa_bezrobocia[dane$Płeć == "mężczyźni"]
+
+      if (stopa_k <= stopa_m) {
+        idx <- which(data_mod$Powiat == p &
+                     data_mod$Rok == r &
+                     data_mod$Płeć %in% c("kobiety", "mężczyźni"))
+
+        wyniki <- rbind(
+          wyniki,
+          data.frame(
+            Indeks_data_mod = paste(idx, collapse = ", "),
+            Powiat = p,
+            Rok = r,
+            stopa_kobiety = stopa_k,
+            stopa_mezczyzni = stopa_m
+          )
+        )
+      }
+    }
+  }
+}
+
+tab_liczba_powiatow <- wyniki |>
+  group_by(Rok) |>
+  summarize(liczba_powiatow = n(), .groups = "drop") |>
+  pivot_wider(names_from = Rok, values_from = liczba_powiatow)
+
+knitr::kable(
+  tab_liczba_powiatow,
+  booktabs = FALSE,
+  caption = "Liczba powiatów w każdym roku, w których mężczyźni mieli wyższe bezrobocie niż kobiety"
+)
+```
+Można zauważyć że od 2015 do 2019 roku liczba powiatów w których stopa bezrobocia u mężczyzn jest większa od kobiet, maleje w czasie. Od 2020 roku pomijając przejście z 2021 do 2022 liczba powiatów z opisaną włąsnością wzrasta. W 2024 osiąga makimum równe 53 powiaty
+
+
+
+Oprócz tego sprawdziliśmy czy istniały takie powiaty w których stopa bezrobocia mężczyzn była większa od kobiet w każdym rozpatrywanym przez nas roku. Takich powiatów jest 7 i są nimi:
+
+
+```{r}
+
+powiaty_count <- wyniki |>
+  group_by(Powiat) |>
+  summarize(liczba_lat = n(), .groups = "drop") |>
+  filter(liczba_lat == 10)
+
+powiaty_mezczyzni_zawsze_wieksze <- powiaty_count$Powiat
+powiaty_df <- data.frame(Powiaty = powiaty_mezczyzni_zawsze_wieksze)
+
+knitr::kable(
+  powiaty_df,
+  booktabs = FALSE,
+  caption = "Lista powiatów w których mężczyźni mieli wyższe bezrobocie niż kobiety w każdym rozpatrywanym przez nas roku"
+)
+```
+
 ```{r}
 duze <- data_mod |>
   filter(Ludność >= 100000) |>
