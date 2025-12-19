@@ -8,6 +8,9 @@ bibliography: bezrobocie_bibliografia.bib
 nocite: "@*"
 crossref:
   fig-title: "Rysunek"
+knitr:
+  opts_chunk:
+    dev: cairo_pdf
 execute:
   echo: false
   warning: false
@@ -42,7 +45,7 @@ Plik CSV z danymi zawiera następujące zmienne:
 
 - Zmienna „Kod" to numer statystyczny konkretnego powiatu (każdy powiat ma swój indywidualny Kod).
 
-- Zmienna „Płeć" przyjmuje 3 stany (Mężczyzna, Kobieta, Ogółem) czyli mówi nam czy szereg pozostałych zmiennych był rozpatrywany pod kątem jakiejś konkretnej płci czy badany był ogółem.
+- Zmienna „Płeć" przyjmuje 3 stany (mężczyźni, kobiety, ogółem) czyli mówi nam czy szereg pozostałych zmiennych był rozpatrywany pod kątem jakiejś konkretnej płci czy badany był ogółem.
 
 - Zmienna „Ludność" mówi nam ile osób było mieszkańcami danego powiatu na końcu konkretnego roku.
 
@@ -50,7 +53,7 @@ Plik CSV z danymi zawiera następujące zmienne:
 
 - Zmienna „Ludność_wiek_prod" mówi nam o liczbie mieszkańców danego powiatu którzy są w wieku produkcyjnym (miedzy 18 a 59/64 odpowiednio dla kobiet/mężczyzn) na koniec danego roku.
 
-- Zmienna „Wynagrodzenie_przeciętne" mówi nam o średnich zarobkach miesięcznych brutto przez mieszkańców danego powiatu (ta zmienna nie ma rozróżnienia na płcie). Brak danych jest spowodowany tym że GUS nie oferuje informacji o wynagrodzeniach dla mężczyzn i kobiet osobno, tylko dla ogółu.
+- Zmienna „Wynagrodzenie_przeciętne" mówi nam o średnich zarobkach miesięcznych brutto w PLN przez mieszkańców danego powiatu (ta zmienna nie ma rozróżnienia na płcie). Brak danych jest spowodowany tym że GUS nie oferuje informacji o wynagrodzeniach dla mężczyzn i kobiet osobno, tylko dla ogółu.
 
 
 ```{r}
@@ -203,7 +206,7 @@ powiaty_df <- data.frame(Powiaty = powiaty_mezczyzni_zawsze_wieksze)
 knitr::kable(
   powiaty_df,
   booktabs = FALSE,
-  caption = "Lista powiatów, w których wyższa stopa bezrobocia dla mężczyzn niż dla kobiet, utzymywała się przez cały rozpatrywany okres"
+  caption = "Lista powiatów, w których wyższa stopa bezrobocia dla mężczyzn niż dla kobiet, utrzymywała się przez cały rozpatrywany okres"
 )
 ```
 
@@ -219,7 +222,7 @@ data_mod |> filter(Płeć == "ogółem") |>
   labs(x = "Rok",
        y = "Stopa bezrobocia")
 ```
-Na wykresie obserwujemy podobne zależności co na wykresach z krajową stopą bezrobocia. Mediana powiatowej stopy bezrobocia maleje od 2015 do 2019 roku z późniejszym skokiem w górę w 2020 roku. Później natomiast znowu maleje i stabilizuje się na poziomie około 3,75%. Dodatkowo, wraz z medianą maleje także rozstęp międzykwartylowy, co oznacza, że różnice w stopach bezrobocia między „typowymi” powiatami maleją, zatem bezrobocie staje się coraz bardziej wyrównane w powiatach w kolejnych latach. Rozkłady stóp bezrobocia w każdym roku są prawostronnie skośne. Oznacza to, że w każdym roku istnieją takie powiaty ze stosunkowo wysokim bezrobociem.
+Na wykresie obserwujemy podobne zależności co na wykresach z krajową stopą bezrobocia. Mediana powiatowej stopy bezrobocia maleje od 2015 do 2019 roku z późniejszym skokiem w górę w 2020 roku. Później natomiast znowu maleje i stabilizuje się na poziomie około 3.75%. Dodatkowo, wraz z medianą maleje także rozstęp międzykwartylowy, co oznacza, że różnice w stopach bezrobocia między „typowymi” powiatami maleją, zatem bezrobocie staje się coraz bardziej wyrównane w powiatach w kolejnych latach. Rozkłady stóp bezrobocia w każdym roku są prawostronnie skośne. Oznacza to, że w każdym roku istnieją takie powiaty ze stosunkowo wysokim bezrobociem.
 
 ### Czy istnieje zależność między stopą bezrobocia, a wynagrodzeniem brutto w powiecie?
 Żeby sprawdzić, czy istnieje zależność liniowa wykonamy wykres punktowy wartości stóp bezrobocia od wynagrodzenia przeciętnego brutto w poszczególnych powiatach. Poniższy wykres prezentuje te dane dla 2024 roku (Rysunek 5).
